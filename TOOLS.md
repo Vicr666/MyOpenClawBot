@@ -7,6 +7,8 @@ Skills define _how_ tools work. This file is for _your_ specifics — the stuff 
 - **Host:** GitHub Codespaces
 - **Project Path:** `/workspaces/MyOpenClawBot`
 - **Repository:** `https://github.com/Vicr666/MyOpenClawBot`
+- **Public URL Base:** `https://literate-orbit-w4jp9wxgg6qc5w6r` (port will be appended, e.g. -3000.app.github.dev)
+- **User Provided Link:** `https://literate-orbit-w4jp9wxgg6qc5w6r-18789.app.github.dev`
 
 ## Technical Stack
 
@@ -17,6 +19,8 @@ Skills define _how_ tools work. This file is for _your_ specifics — the stuff 
 ## Workflow
 
 - **Auto-Push:** Always commit and push changes to the repository after completing coding tasks.
+- **Preview:** After starting the dev server, construct the public URL (e.g., `https://literate-orbit-w4jp9wxgg6qc5w6r-3000.app.github.dev`) and send it to the user.
+- **Port Management:** Check for port conflicts before starting. Default to 3000.
 
 ## What Goes Here
 
