@@ -3,23 +3,24 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { Heart } from "lucide-react";
+import { Sparkles, Star, Heart, Music, Gift } from "lucide-react";
 
 export default function ValentinePage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showQuestion, setShowQuestion] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const [accepted, setAccepted] = useState(false);
-  const [noBtnPosition, setNoBtnPosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-typing effect variables
+  // 更加含蓄、欣赏的文案
   const message = [
-    "在这个特别的日子里...",
-    "我想告诉你一些藏在心里很久的话。",
-    "你的笑容是我每天最期待的风景。",
-    "遇你，是我这辈子最幸运的事。",
-    "不知不觉中，你已经占据了我所有的思绪。",
-    "未来的每一天，我都想和你一起度过。",
+    "嗨，",
+    "在这个特别的日子里，",
+    "我想把这份小小的仪式感送给你。",
+    "虽然我们认识的时间不长，",
+    "但和你交流的每一个瞬间，",
+    "都让我感到轻松而愉快。",
+    "很庆幸，能在茫茫人海中遇见发光的你。",
+    "愿未来的日子里，我们能发现更多彼此的闪光点。",
   ];
 
   const [currentLine, setCurrentLine] = useState(0);
@@ -28,36 +29,41 @@ export default function ValentinePage() {
     if (isOpen && currentLine < message.length) {
       const timer = setTimeout(() => {
         setCurrentLine((prev) => prev + 1);
-      }, 1500);
+      }, 1200); // 稍微加快一点节奏
       return () => clearTimeout(timer);
     } else if (isOpen && currentLine === message.length) {
-      setTimeout(() => setShowQuestion(true), 1000);
+      setTimeout(() => setShowButton(true), 800);
     }
   }, [isOpen, currentLine]);
 
   const handleAccept = () => {
     setAccepted(true);
-    triggerConfetti();
+    triggerFirework();
   };
 
-  const triggerConfetti = () => {
+  const triggerFirework = () => {
     const duration = 3000;
     const end = Date.now() + duration;
 
+    // 更多样化的庆祝效果
     const frame = () => {
+      // 左侧花瓣
       confetti({
-        particleCount: 2,
+        particleCount: 3,
         angle: 60,
         spread: 55,
         origin: { x: 0 },
-        colors: ["#ff0000", "#ff69b4", "#ffc0cb"],
+        colors: ["#FFB7B2", "#FFDAC1", "#E2F0CB"],
+        shapes: ["circle", "square"],
       });
+      // 右侧星星
       confetti({
-        particleCount: 2,
+        particleCount: 3,
         angle: 120,
         spread: 55,
         origin: { x: 1 },
-        colors: ["#ff0000", "#ff69b4", "#ffc0cb"],
+        colors: ["#B5EAD7", "#C7CEEA", "#FF9AA2"],
+        shapes: ["star"],
       });
 
       if (Date.now() < end) {
@@ -67,136 +73,162 @@ export default function ValentinePage() {
     frame();
   };
 
-  const moveNoButton = () => {
-    if (containerRef.current) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const x = Math.random() * (containerRect.width - 100) - (containerRect.width / 2 - 50);
-      const y = Math.random() * (containerRect.height - 100) - (containerRect.height / 2 - 50);
-      setNoBtnPosition({ x, y });
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-pink-50 flex items-center justify-center p-4 overflow-hidden relative">
-      {/* Background floating hearts */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4 overflow-hidden relative">
+      {/* 动态梦幻背景 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {/* 漂浮的光点和星星 */}
+        {[...Array(15)].map((_, i) => (
           <motion.div
-            key={i}
+            key={`star-${i}`}
             initial={{ opacity: 0, y: "100vh" }}
             animate={{
-              opacity: [0, 0.5, 0],
+              opacity: [0, 0.8, 0],
               y: "-100vh",
-              x: Math.random() * 100 - 50,
+              x: Math.random() * 200 - 100,
+              scale: [0.5, 1, 0.5],
             }}
             transition={{
-              duration: Math.random() * 5 + 5,
+              duration: Math.random() * 8 + 7,
               repeat: Infinity,
               delay: Math.random() * 5,
               ease: "linear",
             }}
-            className="absolute text-pink-200"
-            style={{ left: `${Math.random() * 100}%`, fontSize: `${Math.random() * 20 + 10}px` }}
+            className="absolute text-purple-200/60"
+            style={{
+              left: `${Math.random() * 100}%`,
+              fontSize: `${Math.random() * 20 + 10}px`,
+            }}
           >
-            ❤
+            {i % 2 === 0 ? <Star fill="currentColor" /> : <Sparkles />}
+          </motion.div>
+        ))}
+        {/* 漂浮的花瓣 */}
+        {[...Array(10)].map((_, i) => (
+          <motion.div
+            key={`flower-${i}`}
+            initial={{ opacity: 0, rotate: 0, y: "-10vh" }}
+            animate={{
+              opacity: [0, 0.6, 0],
+              y: "110vh",
+              rotate: 360,
+              x: Math.sin(i) * 100,
+            }}
+            transition={{
+              duration: Math.random() * 10 + 10,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+              ease: "linear",
+            }}
+            className="absolute text-pink-200/50"
+            style={{
+              left: `${Math.random() * 100}%`,
+              fontSize: `${Math.random() * 15 + 10}px`,
+            }}
+          >
+            🌸
           </motion.div>
         ))}
       </div>
 
-      <div ref={containerRef} className="max-w-lg w-full relative z-10">
+      <div ref={containerRef} className="max-w-lg w-full relative z-10 perspective-1000">
         <AnimatePresence mode="wait">
           {!isOpen ? (
             <motion.div
               key="envelope"
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 1.5, opacity: 0 }}
-              className="flex flex-col items-center cursor-pointer"
+              exit={{ scale: 1.1, opacity: 0, rotateX: 90 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center cursor-pointer group"
               onClick={() => setIsOpen(true)}
             >
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="bg-white p-8 rounded-full shadow-xl border-4 border-pink-100 relative"
+              <div className="relative">
+                {/* 光晕效果 */}
+                <div className="absolute inset-0 bg-pink-400 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500 animate-pulse"></div>
+                
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white/80 backdrop-blur-md p-10 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/50 relative z-10"
+                >
+                  <Gift className="w-20 h-20 text-indigo-400 stroke-1" />
+                </motion.div>
+              </div>
+              <motion.p
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                delay={0.2}
+                className="mt-8 text-slate-600 font-light text-lg tracking-[0.2em]"
               >
-                <Heart className="w-24 h-24 text-red-500 fill-red-500" />
-                <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
-                  点击开启
-                </div>
-              </motion.div>
-              <p className="mt-6 text-pink-800 font-medium text-lg tracking-widest">
-                有一封给你的信
-              </p>
+                TO: 一个特别的新朋友
+              </motion.p>
+              <p className="text-xs text-slate-400 mt-2 animate-pulse">点击查收</p>
             </motion.div>
           ) : !accepted ? (
             <motion.div
               key="letter"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-pink-100 min-h-[400px] flex flex-col items-center justify-center text-center"
+              initial={{ opacity: 0, rotateX: -90, y: 50 }}
+              animate={{ opacity: 1, rotateX: 0, y: 0 }}
+              className="bg-white/60 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_20px_50px_rgb(0,0,0,0.1)] border border-white/40 min-h-[500px] flex flex-col items-center justify-between text-center relative overflow-hidden"
             >
-              <div className="space-y-4 mb-8">
+              {/* 装饰边框 */}
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-200 via-pink-200 to-indigo-200 opacity-50"></div>
+
+              <div className="space-y-6 w-full flex-1 flex flex-col justify-center">
                 {message.slice(0, currentLine).map((line, index) => (
-                  <motion.p
+                  <motion.div
                     key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-gray-700 text-lg font-light leading-relaxed font-serif"
+                    initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                   >
-                    {line}
-                  </motion.p>
+                    <p className="text-slate-700 text-lg md:text-xl font-light leading-relaxed tracking-wide font-[Songti SC, serif]">
+                      {line}
+                    </p>
+                  </motion.div>
                 ))}
               </div>
 
-              {showQuestion && (
+              {showButton && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="space-y-6 mt-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-12 w-full"
                 >
-                  <h2 className="text-2xl font-bold text-pink-600">
-                    做我的 Valentine 好吗？
-                  </h2>
-                  <div className="flex gap-4 justify-center items-center relative h-16">
-                    <button
-                      onClick={handleAccept}
-                      className="px-8 py-3 bg-red-500 hover:bg-red-600 text-white rounded-full font-semibold shadow-lg transform hover:scale-105 transition-all z-20"
-                    >
-                      我愿意 ❤
-                    </button>
-                    
-                    <motion.button
-                      animate={{ x: noBtnPosition.x, y: noBtnPosition.y }}
-                      onMouseEnter={moveNoButton}
-                      onClick={moveNoButton}
-                      className="px-8 py-3 bg-gray-200 text-gray-500 rounded-full font-semibold absolute transition-colors duration-200 z-10"
-                    >
-                      再想想
-                    </motion.button>
-                  </div>
+                  <button
+                    onClick={handleAccept}
+                    className="group relative w-full py-4 px-8 rounded-xl overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-pink-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <span className="relative z-10 text-slate-600 font-medium tracking-widest group-hover:text-indigo-600 transition-colors flex items-center justify-center gap-2">
+                      <span>✨</span> 很高兴遇见你
+                    </span>
+                  </button>
                 </motion.div>
               )}
             </motion.div>
           ) : (
             <motion.div
               key="success"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white/90 backdrop-blur p-10 rounded-3xl shadow-2xl text-center border-4 border-red-100"
+              initial={{ scale: 0.9, opacity: 0, filter: "blur(20px)" }}
+              animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.8 }}
+              className="bg-white/40 backdrop-blur-md p-12 rounded-3xl shadow-xl text-center border border-white/60 max-w-sm"
             >
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.5, repeat: Infinity }}
-              >
-                <Heart className="w-32 h-32 text-red-500 fill-red-500 mx-auto mb-6" />
-              </motion.div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                太好了！
+              <div className="mb-8 relative inline-block">
+                <div className="absolute inset-0 bg-pink-200 blur-2xl opacity-40 rounded-full"></div>
+                <Sparkles className="w-20 h-20 text-indigo-400 relative z-10 mx-auto" strokeWidth={1} />
+              </div>
+              
+              <h1 className="text-2xl font-light text-slate-700 mb-4 tracking-wider">
+                未来可期
               </h1>
-              <p className="text-xl text-gray-600">
-                这是我今年收到的最好的礼物。
-                <br />
-                情人节快乐！🌹
+              <p className="text-slate-500 font-light leading-relaxed">
+                愿这份相遇<br/>
+                能成为我们生活里的小确幸<br/>
+                <span className="text-sm opacity-60 mt-4 block">Happy Valentine's Day</span>
               </p>
             </motion.div>
           )}
