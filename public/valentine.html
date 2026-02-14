@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To: 一个特别的新朋友</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* Base Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #eff6ff 0%, #f3e8ff 50%, #fff1f2 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background Animation */
+        .bg-element {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+            animation: float-up linear infinite;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            padding: 40px;
+            text-align: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none; /* Controlled by JS */
+            flex-direction: column;
+            align-items: center;
+            min-height: 400px;
+            justify-content: center;
+        }
+
+        .card.active {
+            display: flex;
+            animation: fade-in-up 0.8s ease forwards;
+        }
+
+        .card.exit {
+            animation: fade-out-up 0.5s ease forwards;
+            display: flex;
+            position: absolute;
+            width: calc(100% - 40px);
+            top: 20px;
+        }
+
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(40px) rotateX(-10deg); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0) rotateX(0); filter: blur(0); }
+        }
+
+        @keyframes fade-out-up {
+            to { opacity: 0; transform: translateY(-40px) scale(0.95); }
+        }
+
+        /* Typography */
+        h1 { color: #334155; font-weight: 300; letter-spacing: 2px; margin-bottom: 20px; }
+        p { color: #475569; line-height: 1.8; margin-bottom: 12px; font-weight: 300; font-size: 1.1rem; }
+        
+        .message-line {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+            filter: blur(5px);
+        }
+        .message-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        /* Button */
+        .btn-start {
+            cursor: pointer;
+            padding: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .btn-start:hover { transform: scale(1.05); }
+        
+        .btn-primary {
+            background: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-size: 1rem;
+            color: #475569;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+        .btn-primary.visible { opacity: 1; transform: translateY(0); }
+        .btn-primary:hover {
+            color: #4f46e5;
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* SVG Icons */
+        .icon-gift { width: 80px; height: 80px; color: #818cf8; stroke-width: 1; }
+        .icon-sparkle { width: 60px; height: 60px; color: #818cf8; margin-bottom: 20px; }
+        
+        /* Utils */
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div id="bg-container"></div>
+
+    <div class="container">
+        <!-- STEP 1: Entrance -->
+        <div id="card-1" class="card active" style="cursor: pointer;" onclick="nextStep()">
+            <div class="btn-start">
+                <svg class="icon-gift" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+            </div>
+            <p style="letter-spacing: 0.2em; color: #64748b; margin-top: 10px;">TO: 一个特别的新朋友</p>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 5px;" class="pulse">点击查收</p>
+        </div>
+
+        <!-- STEP 2: Message -->
+        <div id="card-2" class="card" style="align-items: stretch; text-align: center;">
+            <div id="message-container" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <!-- Lines injected by JS -->
+            </div>
+            
+            <button id="accept-btn" class="btn-primary" onclick="finish()">
+                <span>✨</span> 很高兴遇见你
+            </button>
+        </div>
+
+        <!-- STEP 3: Success -->
+        <div id="card-3" class="card">
+            <svg class="icon-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+            <h1 style="font-size: 1.5rem; margin-bottom: 10px;">未来可期</h1>
+            <p>愿这份相遇<br>能成为我们生活里的小确幸</p>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 20px;">Happy Valentine's Day</p>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const messages = [
+            "嗨，",
+            "在这个特别的日子里，",
+            "我想把这份小小的仪式感送给你。",
+            "虽然我们认识的时间不长，",
+            "但和你交流的每一个瞬间，",
+            "都让我感到轻松而愉快。",
+            "很庆幸，能在茫茫人海中遇见发光的你。",
+            "愿未来的日子里，我们能发现更多彼此的闪光点。"
+        ];
+
+        // Background Animation Logic
+        function createBgElements() {
+            const container = document.getElementById('bg-container');
+            const symbols = ['★', '✦', '🌸'];
+            const colors = ['#e0e7ff', '#fae8ff', '#ffe4e6'];
+            
+            for(let i=0; i<20; i++) {
+                const el = document.createElement('div');
+                el.className = 'bg-element';
+                el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                el.style.left = Math.random() * 100 + '%';
+                el.style.color = colors[Math.floor(Math.random() * colors.length)];
+                el.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                el.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                el.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(el);
+            }
+        }
+        createBgElements();
+
+        // Step Transition
+        function nextStep() {
+            const c1 = document.getElementById('card-1');
+            const c2 = document.getElementById('card-2');
+            
+            c1.classList.remove('active');
+            c1.classList.add('exit');
+            
+            setTimeout(() => {
+                c1.style.display = 'none';
+                c2.classList.add('active');
+                playMessages();
+            }, 400);
+        }
+
+        // Typing Effect
+        function playMessages() {
+            const container = document.getElementById('message-container');
+            let delay = 0;
+
+            messages.forEach((text, index) => {
+                const p = document.createElement('p');
+                p.innerText = text;
+                p.className = 'message-line';
+                container.appendChild(p);
+
+                setTimeout(() => {
+                    p.classList.add('visible');
+                }, delay);
+
+                delay += 1200; // Interval
+            });
+
+            // Show button after all text
+            setTimeout(() => {
+                document.getElementById('accept-btn').classList.add('visible');
+            }, delay + 500);
+        }
+
+        // Finish & Fireworks
+        function finish() {
+            const c2 = document.getElementById('card-2');
+            const c3 = document.getElementById('card-3');
+
+            c2.classList.remove('active');
+            c2.classList.add('exit');
+            
+            setTimeout(() => {
+                c2.style.display = 'none';
+                c3.classList.add('active');
+                triggerFirework();
+            }, 400);
+        }
+
+        function triggerFirework() {
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                // Left
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ["#FFB7B2", "#FFDAC1", "#E2F0CB"],
+                    shapes: ["circle", "square"],
+                    disableForReducedMotion: true
+                });
+                // Right
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ["#B5EAD7", "#C7CEEA", "#FF9AA2"],
+                    shapes: ["star"],
+                    disableForReducedMotion: true
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+    </script>
+</body>
+</html>
